@@ -13,15 +13,20 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 
@@ -46,6 +51,9 @@ public class User implements Serializable{
 	
 	private Integer sex;
 	
+	private String salt;
+	
+	@DateTimeFormat(pattern="yyyy-MM-dd")  
 	private Date brithday;
 	
 	private String tools;
@@ -59,6 +67,8 @@ public class User implements Serializable{
 	private String signature;
 	
 	private String mobile;
+	
+	private String roles;
 	
 	private List<User> friendList = Lists.newArrayList(); // 有序的关联对象集合
 
@@ -89,6 +99,16 @@ public class User implements Serializable{
 	public void setPwd(String pwd) {
 		this.pwd = pwd;
 	}
+	
+	
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
 
 	public String getNickname() {
 		return nickname;
@@ -113,9 +133,26 @@ public class User implements Serializable{
 	public void setSex(Integer sex) {
 		this.sex = sex;
 	}
+	
+	
+	
+	public String getRoles() {
+		return roles;
+	}
 
+	public void setRoles(String roles) {
+		this.roles = roles;
+	}
+
+	@Transient
+	@JsonIgnore
+	public List<String> getRoleList() {
+		// 角色列表在数据库中实际以逗号分隔字符串存储，因此返回不能修改的List.
+		return ImmutableList.copyOf(StringUtils.split(roles, ","));
+	}
+	
 	// 设定JSON序列化时的日期格式
-	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+08:00")
+//	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+08:00")
 	public Date getBrithday() {
 		return brithday;
 	}

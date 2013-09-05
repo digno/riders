@@ -13,12 +13,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -34,12 +33,16 @@ public class Team implements Serializable{
 	private static final long serialVersionUID = -6233309520591117883L;
 
 	private Long tid;
-
+	
+	private Long master_id;
+	
 	private User leader;
 
 	private Date ctime;
 
 	private String declaration;
+	
+	private String teamname;
 	
 	private List<User> teamMembers = Lists.newArrayList(); // 有序的关联对象集合
 
@@ -52,10 +55,9 @@ public class Team implements Serializable{
 	public void setTid(Long tid) {
 		this.tid = tid;
 	}
-
-	@NotNull
+	
 	@OneToOne
-	@JoinColumn(name = "master_id")
+	@PrimaryKeyJoinColumn
 	public User getLeader() {
 		return leader;
 	}
@@ -66,6 +68,15 @@ public class Team implements Serializable{
 
 	public Date getCtime() {
 		return ctime;
+	}
+	
+
+	public Long getMaster_id() {
+		return master_id;
+	}
+
+	public void setMaster_id(Long master_id) {
+		this.master_id = master_id;
 	}
 
 	public void setCtime(Date ctime) {
@@ -96,9 +107,21 @@ public class Team implements Serializable{
 	public void setTeamMembers(List<User> teamMembers) {
 		this.teamMembers = teamMembers;
 	}
+	
+	
+
+	public String getTeamname() {
+		return teamname;
+	}
+
+	public void setTeamname(String teamname) {
+		this.teamname = teamname;
+	}
 
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
+	
+	
 }
