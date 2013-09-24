@@ -17,8 +17,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -37,8 +35,6 @@ public class Activity implements Serializable{
 
 	private User owner;
 
-	private Integer range;
-
 	private Date ctime;
 
 	private String title;
@@ -46,6 +42,8 @@ public class Activity implements Serializable{
 	private String content;
 	
 	private String expireTime;
+	
+	private Integer atype;
 	
 	private List<User> activityMembers = Lists.newArrayList(); // 有序的关联对象集合
 
@@ -70,13 +68,6 @@ public class Activity implements Serializable{
 		this.owner = owner;
 	}
 
-	public Integer getRange() {
-		return range;
-	}
-
-	public void setRange(Integer range) {
-		this.range = range;
-	}
 
 	public Date getCtime() {
 		return ctime;
@@ -111,6 +102,16 @@ public class Activity implements Serializable{
 
 	public void setExpireTime(String expireTime) {
 		this.expireTime = expireTime;
+	}
+	
+	
+
+	public Integer getAtype() {
+		return atype;
+	}
+
+	public void setAtype(Integer atype) {
+		this.atype = atype;
 	}
 
 	// 多对多定义

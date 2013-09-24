@@ -119,7 +119,7 @@
 		<jdbc:initialize-database data-source="dataSource" ignore-failures="ALL">
 			<jdbc:script location="classpath:sql/${db.type}/schema.sql" />
 		</jdbc:initialize-database>	
-	</beans>
+	</beans> 
 	
 	<!-- unit test环境 -->
 	<beans profile="test">

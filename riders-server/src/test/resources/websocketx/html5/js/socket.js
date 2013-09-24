@@ -6,7 +6,7 @@
         }
 
         if (window.WebSocket) {
-            socket = new WebSocket("ws://localhost:10009/websocket");
+            socket = new WebSocket("ws://192.168.8.95:10009/websocket");
             socket.onopen = onopen;
             socket.onmessage = onmessage;
             socket.onclose = onclose;

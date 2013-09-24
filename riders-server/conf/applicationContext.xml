@@ -24,9 +24,9 @@
 		<property name="packagesToScan" value="com.leadtone.riders.entity" />
 		<property name="jpaProperties">
 			<props>
-			<!-- 暂时不适用ehcache 若要使用需要重新install riders-model 模块-->
-			<!-- <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
-				<prop key="net.sf.ehcache.configurationResourceName">cache/ehcache-hibernate-local.xml</prop> -->
+				<!-- 暂时不适用ehcache 若要使用需要重新install riders-model 模块 -->
+				<!-- <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop> 
+					<prop key="net.sf.ehcache.configurationResourceName">cache/ehcache-hibernate-local.xml</prop> -->
 				<!-- 命名规则 My_NAME->MyName -->
 				<prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
 			</props>

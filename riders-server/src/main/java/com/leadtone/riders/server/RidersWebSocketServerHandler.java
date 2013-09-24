@@ -43,6 +43,8 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
@@ -73,7 +75,10 @@ public class RidersWebSocketServerHandler extends
 	private ConcurrentHashMap<String, RiderChannel> channelsMap = ConcurrentContext
 			.getChannelMapInstance();
 
-	private RiderChannel riderChannel = new RiderChannel();
+	private ConcurrentHashMap<Integer, RiderChannel> cMap  =ConcurrentContext.getAvailableChannelMapInstance();
+//	private List<RiderChannel> cList = new ArrayList<RiderChannel>();
+	
+//	private RiderChannel riderChannel = new RiderChannel();
 
 	private static final String WEBSOCKET_PATH = "/websocket";
 
@@ -137,8 +142,11 @@ public class RidersWebSocketServerHandler extends
 					.sendUnsupportedWebSocketVersionResponse(ctx.channel());
 		} else {
 			handshaker.handshake(ctx.channel(), req);
+			RiderChannel riderChannel = new RiderChannel();
 			riderChannel.setChannelId(ctx.channel().id());
 			riderChannel.setChannel(ctx.channel());
+			cMap.put(ctx.channel().id(), riderChannel);
+//			cList.add(riderChannel);
 		}
 	}
 
@@ -149,6 +157,8 @@ public class RidersWebSocketServerHandler extends
 		if (frame instanceof CloseWebSocketFrame) {
 			frame.retain();
 			handshaker.close(ctx.channel(), (CloseWebSocketFrame) frame);
+			logger.info("received CloseWebSocketFrame");
+			cMap.remove(ctx.channel().id());
 			return;
 		}
 		if (frame instanceof PingWebSocketFrame) {
@@ -182,6 +192,7 @@ public class RidersWebSocketServerHandler extends
 				if (ServerConstants.SUBJECT_LOGIN.equalsIgnoreCase(message.getContent().getType())) {
 					String resultCode = (String) resultContent.getData().get("result");
 					if (Integer.valueOf(resultCode) == 0) {
+						RiderChannel riderChannel  = cMap.get(ctx.channel().id());
 						riderChannel.setLogined(true);
 						String email = (String) message.getContent().getData().get("email");
 						channelsMap.put(email, riderChannel);
@@ -201,7 +212,11 @@ public class RidersWebSocketServerHandler extends
 				}
 				result = ResponseHelper.genAsyncResponse(message);
 			}
-
+			logger.info(cMap.size() + " channels in Server");
+//			logger.info(channelsMap.size() + " channels in Server");
+//			for(String id : channelsMap.keySet()){
+//				logger.info(id + " : " + channelsMap.get(id));
+//			}
 			ctx.channel().write(new TextWebSocketFrame(result));
 
 		} catch (Exception e) {

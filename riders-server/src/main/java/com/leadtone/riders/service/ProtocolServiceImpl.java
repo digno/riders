@@ -17,6 +17,7 @@ import com.leadtone.riders.protocol.beans.Content;
 import com.leadtone.riders.protocol.beans.RidersMessage;
 import com.leadtone.riders.protocol.converter.ResponseContentHelper;
 import com.leadtone.riders.server.RiderChannel;
+import com.leadtone.riders.service.biz.ActivityServiceImpl;
 import com.leadtone.riders.service.biz.UserServiceImpl;
 
 @Service
@@ -27,12 +28,17 @@ public class ProtocolServiceImpl implements IProtocolService {
 
 	private ConcurrentHashMap<String, RiderChannel> channelsMap = ConcurrentContext
 			.getChannelMapInstance();
+	
+	private ConcurrentHashMap<Integer, RiderChannel> cMap = ConcurrentContext.getAvailableChannelMapInstance();
 
 	@Autowired
 	private IBizService bizService;
 	
 	@Autowired
 	private UserServiceImpl userService;
+	
+	@Autowired
+	private ActivityServiceImpl activityService;
 
 	@Override
 	public Content dispatch(RidersMessage message) {
@@ -55,6 +61,7 @@ public class ProtocolServiceImpl implements IProtocolService {
 			// result = register(message.getContent());
 			break;
 		case ACTIVITY:
+			result = bizService.process(requestContent,activityService);
 			break;
 		case COMMENT:
 			break;
@@ -80,11 +87,19 @@ public class ProtocolServiceImpl implements IProtocolService {
 	@Override
 	public boolean route(String from, String to, String request) {
 		if (ServerConstants.TO_ALL.equalsIgnoreCase(to)) {
-			for (String email : channelsMap.keySet()) {
-				if (from.equalsIgnoreCase(email)) {
+//			for (String email : channelsMap.keySet()) {
+//				if (from.equalsIgnoreCase(email)) {
+//					continue;
+//				}
+//				RiderChannel channel = channelsMap.get(email);
+//				writeToChannel(channel, request);
+//			}
+			for (Integer id : cMap.keySet()){
+				
+				if (id == cMap.get(id).getChannelId()) {
 					continue;
 				}
-				RiderChannel channel = channelsMap.get(email);
+				RiderChannel channel = cMap.get(id);
 				writeToChannel(channel, request);
 			}
 		} else {
@@ -94,13 +109,16 @@ public class ProtocolServiceImpl implements IProtocolService {
 		return true;
 	}
 
+	
+	
 	private void writeToChannel(RiderChannel channel, String request) {
 		try {
-			if (channel.isLogined()) {
-				channel.getChannel().write(new TextWebSocketFrame(request));
-			} else {
-				log.info("BAD REQUEST. (not logined)");
-			}
+			channel.getChannel().write(new TextWebSocketFrame(request));
+//			if (channel.isLogined()) {
+//				channel.getChannel().write(new TextWebSocketFrame(request));
+//			} else {
+//				log.info("BAD REQUEST. (not logined)");
+//			}
 		} catch (Exception e) {
 			log.error(e);
 		}

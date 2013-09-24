@@ -44,6 +44,8 @@ public class Team implements Serializable{
 	
 	private String teamname;
 	
+	private Integer ttype;
+	
 	private List<User> teamMembers = Lists.newArrayList(); // 有序的关联对象集合
 
 	@Id
@@ -116,6 +118,15 @@ public class Team implements Serializable{
 
 	public void setTeamname(String teamname) {
 		this.teamname = teamname;
+	}
+
+	
+	public Integer getTtype() {
+		return ttype;
+	}
+
+	public void setTtype(Integer ttype) {
+		this.ttype = ttype;
 	}
 
 	@Override
